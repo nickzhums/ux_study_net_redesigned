@@ -214,7 +214,7 @@ Using the operation object we can perform entity level operations such as updati
 Example: Creating a Virtual Network
 --------------------------------------
 
-In this example we will be create a VirtualNetwork.  Since the SDK follows the resource
+In this example we will be creating a VirtualNetwork.  Since the SDK follows the resource
 hierarchy in Azure, we will need to do this inside of a ResourceGroup.  We will start by creating
 a new resource group like we did above
 
