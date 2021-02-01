@@ -249,8 +249,8 @@ to create our Subnet.
 Your task will be
 ----------
 
-1. [Create a virtual machine](createvm.md)
-2. [Shut down all vms in the test environment before you go home for the day](shutdownall.md)
+1. [Create a virtual machine](Part1CreateVM.md)
+2. [Shut down all vms in the test environment before you go home for the day](Part2ShutdownVM.md)
 
 Need help?
 ----------
