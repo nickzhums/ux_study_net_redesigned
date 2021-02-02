@@ -182,7 +182,7 @@ Using the container object we can perform collection level operations such as li
 ***Create a resource group***
 
 ```csharp
-    var location = "westus2";
+    var location = Location.WestUS2;
     var rgName = "myRgName";
     var resourceGroup = (await rgContainer.Construct(location).CreateAsync(rgName)).Value;
 ```
@@ -208,20 +208,20 @@ Using the operation object we can perform entity level operations such as updati
 ***Delete a resource group***
 
 ```csharp
-    await resourceGroup.DeleteAsync();
+    await rgOperation.DeleteAsync();
 ```
 
 Example: Creating a Virtual Network
 --------------------------------------
 
-In this example we will be creating a VirtualNetwork.  Since the SDK follows the resource
+In this example we will be create a VirtualNetwork.  Since the SDK follows the resource
 hierarchy in Azure, we will need to do this inside of a ResourceGroup.  We will start by creating
 a new resource group like we did above
 
 ```csharp
     var armClient = new AzureResourceManagerClient(new DefaultAzureCredential());
     var rgContainer = armClient.DefaultSubscription.GetResourceGroupContainer();
-    var resourceGroup = (await rgContainer.Construct(location).CreateAsync(rg)).Value;
+    var resourceGroup = (await rgContainer.Construct(Location.WestUS2).CreateAsync(rg)).Value;
 ```
 
 Now that we have a ResourceGroup we will now create our VirtualNetwork.  To do this we will use
@@ -251,8 +251,8 @@ to create our Subnet.
 Your task will be
 ----------
 
-1. [Create a virtual machine](Part1CreateVM.md)
-2. [Shut down all vms in the test environment before you go home for the day](Part2ShutdownVM.md)
+1. [Create a virtual machine](createvm.md)
+2. [Shut down all vms in the test environment before you go home for the day](shutdownall.md)
 
 Need help?
 ----------
