@@ -131,8 +131,6 @@ Now that we have seen each of the four concepts, let us look at how they all wor
 Imagine that our company requires all virtual machines to be tagged with the owner and we are tasked with
 writing a program to add the tag to any missing virtual machines in a given resource group.
 
-![Data Hierachy](https://github.com/nickzhums/ux_study_net_redesigned/blob/main/hierachy.png)
-
 ```csharp
     //first we construct our armClient
     var armClient = new AzureResourceManagerClient(new DefaultAzureCredential());
@@ -171,6 +169,8 @@ the default subscription configured for your user.
 This is a scoped operations object, and any operations you perform will be done under that subscription.  From this object you have access to all children via container objects
 or you can access individual children by id.
 ```csharp
+    var armClient = new AzureResourceManagerClient(new DefaultAzureCredential());
+    var subscription = armClient.DefaultSubscription;
     var rgContainer = subscription.GetResourceGroupContainer();
     ...
     var rgName = "myRgName";
@@ -182,6 +182,10 @@ Using the container object we can perform collection level operations such as li
 ***Create a resource group***
 
 ```csharp
+    var armClient = new AzureResourceManagerClient(new DefaultAzureCredential());
+    var subscription = armClient.DefaultSubscription;
+    var rgContainer = subscription.GetResourceGroupContainer();
+    
     var location = Location.WestUS2;
     var rgName = "myRgName";
     var resourceGroup = (await rgContainer.Construct(location).CreateAsync(rgName)).Value;
@@ -190,6 +194,9 @@ Using the container object we can perform collection level operations such as li
 ***List all resource groups***
 
 ```csharp
+    var armClient = new AzureResourceManagerClient(new DefaultAzureCredential());
+    var subscription = armClient.DefaultSubscription;
+    var rgContainer = subscription.GetResourceGroupContainer();
     AsyncPageable<ResourceGroup> response = rgContainer.ListAsync();
     await foreach (var rg in response)
     {
@@ -202,12 +209,18 @@ Using the operation object we can perform entity level operations such as updati
 ***Update a resource group***
 
 ```csharp
+    var armClient = new AzureResourceManagerClient(new DefaultAzureCredential());
+    var subscription = armClient.DefaultSubscription;
+    var rgOperation = subscriptionOperation.GetResourceGroupOperations(rgName);
     var resourceGroup = (await rgOperation.StartAddTag("key", "value").WaitForCompletionAsync()).Value;
 ```
 
 ***Delete a resource group***
 
 ```csharp
+    var armClient = new AzureResourceManagerClient(new DefaultAzureCredential());
+    var subscription = armClient.DefaultSubscription;
+    var rgOperation = subscriptionOperation.GetResourceGroupOperations(rgName);
     await rgOperation.DeleteAsync();
 ```
 
@@ -244,15 +257,15 @@ to create our Subnet.
     var subnetName = "mySubnetName";
     var subnetContainer = virtualNetwork.GetSubnetContainer();
     var subnet = await subnetContainer
-        .Construct(subnetName, "10.0.0.0/24")
+        .Construct("10.0.0.0/24")
         .CreateAsync(subnetName);
 ```
 
 Your task will be
 ----------
 
-1. [Create a virtual machine](createvm.md)
-2. [Shut down all vms in the test environment before you go home for the day](shutdownall.md)
+1. [Create a virtual machine](Part1CreateVM.md)
+2. [Shut down all vms in the test environment before you go home for the day](Part2ShutdownVM.md)
 
 Need help?
 ----------
