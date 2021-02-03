@@ -127,6 +127,8 @@ to a specific resource in Azure.
 
 ### Putting it all together
 
+![Data Hierachy](https://github.com/nickzhums/ux_study_net_redesigned/blob/main/hierachy.png)
+
 Now that we have seen each of the four concepts, let us look at how they all work together in a common scenario.
 Imagine that our company requires all virtual machines to be tagged with the owner and we are tasked with
 writing a program to add the tag to any missing virtual machines in a given resource group.
