@@ -52,6 +52,8 @@ already scoped to the proper subscription and resource group.
 
 To accomplish this we are introducing 4 standard types for all resources in Azure.
 
+![Data hierachy](hierachy.png)
+
 ### [Resource]Data
 
 This represents the data that makes up a given resource.  Typically this is the response data from a service call such as GET and provides details about the underlying resource.
@@ -264,8 +266,8 @@ to create our Subnet.
 Your task will be
 ----------
 
-1. [Create a virtual machine](createvm.md)
-2. [Shut down all vms in the test environment before you go home for the day](shutdownall.md)
+1. [Create a virtual machine](Part1CreateVM.md)
+2. [Shut down all vms in the test environment before you go home for the day](Part2ShutdownVM.md)
 
 Need help?
 ----------
