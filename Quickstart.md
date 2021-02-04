@@ -127,8 +127,6 @@ to a specific resource in Azure.
 
 ### Putting it all together
 
-![Data Hierachy](https://github.com/nickzhums/ux_study_net_redesigned/blob/main/hierachy.png)
-
 Now that we have seen each of the four concepts, let us look at how they all work together in a common scenario.
 Imagine that our company requires all virtual machines to be tagged with the owner and we are tasked with
 writing a program to add the tag to any missing virtual machines in a given resource group.
@@ -247,7 +245,7 @@ object and then send that to the Create(...) method.
     var vnetContainer = resourceGroup.GetVirtualNetworkContainer();
     var virtualNetwork = await vnetContainer
         .Construct("10.0.0.0/16", location)
-        .CreateAsync("myVnetName");
+        .CreateAsync("myVnetName").Value;
 ```
 
 Now that we have a VirtualNetwork we must create at least one Subnet in order to add any VirtualMachines.
@@ -260,14 +258,14 @@ to create our Subnet.
     var subnetContainer = virtualNetwork.GetSubnetContainer();
     var subnet = await subnetContainer
         .Construct("10.0.0.0/24")
-        .CreateAsync(subnetName);
+        .CreateAsync(subnetName).Value;
 ```
 
 Your task will be
 ----------
 
-1. [Create a virtual machine](Part1CreateVM.md)
-2. [Shut down all vms in the test environment before you go home for the day](Part2ShutdownVM.md)
+1. [Create a virtual machine](createvm.md)
+2. [Shut down all vms in the test environment before you go home for the day](shutdownall.md)
 
 Need help?
 ----------
