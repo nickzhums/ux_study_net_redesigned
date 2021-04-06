@@ -35,7 +35,7 @@ following:
     using Azure.ResourceManager.Core;
     using System;
     ...
-    AzureResourceManagerClient armClient = new AzureResourceManagerClient(new DefaultAzureCredential());
+    ArmClient armClient = new ArmClient(new DefaultAzureCredential());
 ```
 From this code snippet, we showed that in order to interact with Resources, we need to create the top-level client first **AzureResourceManagerClient**
 
@@ -79,12 +79,12 @@ parameters such as subscription id or resource name.
     string rgName = "myRgName";
     string vmName = "myVmName";
     Subscription subscription = armClient.DefaultSubscription;
-    ResourceGroupOperations rgOperation = subscription.GetResourceGroupOperations(rgName);
-    VirtualMachineOperations vmOperation = rgOperation.GetVirtualMachineOperations(vmName);
+    ResourceGroup resourceGroup = await subscription.GetResourceGroups().GetAsync(rgName);
+    VirtualMachine virtualMachine = await resourceGroup.GetVirtualMachines().GetAsync(vmName);
 
     // no longer need to pass in scope parameters since the object knows the scope
-    await vmOperation.StartPowerOff().WaitForCompletionAsync();
-    await vmOperation.StartPowerOn().WaitForCompletionAsync();
+    await virtualMachine.StartPowerOff().WaitForCompletionAsync();
+    await virtualMachine.StartPowerOn().WaitForCompletionAsync();
 ```
 
 This becomes more pronounced when dealing with list methods and performing operations on the response items.
@@ -105,10 +105,10 @@ This becomes more pronounced when dealing with list methods and performing opera
 ```csharp
     Subscription subscription = armClient.DefaultSubscription;
 
-    foreach(VirtualMachine vm in subscription.ListVirtualMachines())
+    foreach(VirtualMachine virtualMachine in subscription.ListVirtualMachines())
     {
         // because each object is already scoped I no longer need to pass in those variables
-        await vm.StartAddTag("tagKey", "tagValue").WaitForCompletionAsync();
+        await virtualMachine.StartAddTag("tagKey", "tagValue").WaitForCompletionAsync();
     }
 ```
 
@@ -133,15 +133,15 @@ writing a program to add the tag to any missing virtual machines in a given reso
 
 ```csharp
     //first we construct our armClient
-    AzureResourceManagerClient armClient = new AzureResourceManagerClient(new DefaultAzureCredential());
+    ArmClient armClient = new ArmClient(new DefaultAzureCredential());
 
-    //next we get a resource operations object
-    //rgOperation is a [Resource]Operations object from above
-    ResourceGroupOperations rgOperation = armClient.DefaultSubscription.GetResourceGroupOperations("myRgName");
+    //next we get a resource group object
+    //resourceGroup is a [Resource] object from above
+    ResourceGroup resourceGroup = await armClient.DefaultSubscription.GetResourceGroups().GetAsync("myRgName");
 
     //next we get the container for the virtual machines
     //vmContainer is a [Resource]Container object from above
-    VirtualMachineContainer vmContainer = rgOperation.GetVirtualMachineContainer();
+    VirtualMachineContainer vmContainer = resourceGroup.GetVirtualMachines();
 
     //next we loop over all vms in the container
     //each vm is a [Resource] object from above
@@ -162,19 +162,19 @@ Example: Managing Resource Groups
 When you first create your armClient you will want to choose which subscription you are going to work in.  There is a convenient **DefaultSubscription** property which will return
 the default subscription configured for your user.
 ```csharp
-    AzureResourceManagerClient armClient = new AzureResourceManagerClient(new DefaultAzureCredential());
+    ArmClient armClient = new ArmClient(new DefaultAzureCredential());
     Subscription subscription = armClient.DefaultSubscription;
 ```
 
 This is a scoped operations object, and any operations you perform will be done under that subscription.  From this object you have access to all children via container objects
 or you can access individual children by id.
 ```csharp
-    AzureResourceManagerClient armClient = new AzureResourceManagerClient(new DefaultAzureCredential());
+    ArmClient armClient = new ArmClient(new DefaultAzureCredential());
     Subscription subscription = armClient.DefaultSubscription;
-    ResourceGroupContainer rgContainer = subscription.GetResourceGroupContainer();
+    ResourceGroupContainer rgContainer = subscription.GetResourceGroups();
     ...
     string rgName = "myRgName";
-    ResourceGroupOperations rgOperation = subscription.GetResourceGroupOperations(rgName);
+    ResourceGroup resourceGroup = rgContainer.Get(rgName);
 ```
 
 Using the container object we can perform collection level operations such as list all of the resource groups or create new ones under our subscription
@@ -182,9 +182,9 @@ Using the container object we can perform collection level operations such as li
 ***Create a resource group***
 
 ```csharp
-    AzureResourceManagerClient armClient = new AzureResourceManagerClient(new DefaultAzureCredential());
+    ArmClient armClient = new ArmClient(new DefaultAzureCredential());
     Subscription subscription = armClient.DefaultSubscription;
-    ResourceGroupContainer rgContainer = subscription.GetResourceGroupContainer();
+    ResourceGroupContainer rgContainer = subscription.GetResourceGroups();
     
     LocationData location = LocationData.WestUS2;
     string rgName = "myRgName";
@@ -194,9 +194,9 @@ Using the container object we can perform collection level operations such as li
 ***List all resource groups***
 
 ```csharp
-    AzureResourceManagerClient armClient = new AzureResourceManagerClient(new DefaultAzureCredential());
+    ArmClient armClient = new ArmClient(new DefaultAzureCredential());
     Subscription subscription = armClient.DefaultSubscription;
-    ResourceGroupContainer rgContainer = subscription.GetResourceGroupContainer();
+    ResourceGroupContainer rgContainer = subscription.GetResourceGroups();
     AsyncPageable<ResourceGroup> response = rgContainer.ListAsync();
     await foreach (ResourceGroup rg in response)
     {
@@ -209,19 +209,19 @@ Using the operation object we can perform entity level operations such as updati
 ***Update a resource group***
 
 ```csharp
-    AzureResourceManagerClient armClient = new AzureResourceManagerClient(new DefaultAzureCredential());
+    ArmClient armClient = new ArmClient(new DefaultAzureCredential());
     Subscription subscription = armClient.DefaultSubscription;
-    ResourceGroupOperations rgOperation = subscriptionOperation.GetResourceGroupOperations(rgName);
-    ResourceGroup resourceGroup = await rgOperation.StartAddTag("key", "value").WaitForCompletionAsync();
+    ResourceGroup resourceGroup = subscription.GetResourceGroups().Get(rgName);
+    resourceGroup = await rgOperation.StartAddTag("key", "value").WaitForCompletionAsync();
 ```
 
 ***Delete a resource group***
 
 ```csharp
-    AzureResourceManagerClient armClient = new AzureResourceManagerClient(new DefaultAzureCredential());
+    ArmClient armClient = new ArmClient(new DefaultAzureCredential());
     Subscription subscription = armClient.DefaultSubscription;
-    ResourceGroupOperations rgOperation = subscriptionOperation.GetResourceGroupOperations(rgName);
-    await rgOperation.DeleteAsync();
+    ResourceGroup resourceGroup = subscription.GetResourceGroups().Get(rgName);
+    await resourceGroup.DeleteAsync();
 ```
 
 Example: Creating a Virtual Network
@@ -232,8 +232,8 @@ hierarchy in Azure, we will need to do this inside of a ResourceGroup.  We will 
 a new resource group like we did above
 
 ```csharp
-    AzureResourceManagerClient armClient = new AzureResourceManagerClient(new DefaultAzureCredential());
-    ResourceGroupContainer rgContainer = armClient.DefaultSubscription.GetResourceGroupContainer();
+    ArmClient armClient = new ArmClient(new DefaultAzureCredential());
+    ResourceGroupContainer rgContainer = armClient.DefaultSubscription.GetResourceGroups();
     ResourceGroup resourceGroup = await rgContainer.Construct(LocationData.WestUS2).CreateAsync(rg);
 ```
 
@@ -242,7 +242,7 @@ a helper method on the container object called Construct(...) which will allow u
 object and then send that to the Create(...) method.
 
 ```csharp
-    VirtualNetworkContainer vnetContainer = resourceGroup.GetVirtualNetworkContainer();
+    VirtualNetworkContainer vnetContainer = resourceGroup.GetVirtualNetworks();
     VirtualNetwork virtualNetwork = await vnetContainer
         .Construct("10.0.0.0/16", location)
         .CreateAsync("myVnetName");
@@ -255,7 +255,7 @@ to create our Subnet.
 
 ```csharp
     string subnetName = "mySubnetName";
-    SubnetContainer subnetContainer = virtualNetwork.GetSubnetContainer();
+    SubnetContainer subnetContainer = virtualNetwork.GetSubnets();
     Subnet subnet = await subnetContainer
         .Construct("10.0.0.0/24")
         .CreateAsync(subnetName);
