@@ -8,7 +8,7 @@ task will be to add the proper ownership tag to these VirtualMachines so they ca
 
 For reference on general information about the SDK, please see the [Quick Start Guide](WorkShop2021-Quickstart.md).
 
-### Task 1 - Description
+### Task 2 - Description
 
 For this task you are given a vms.json file which has the IDs of the VirtualMachines that are
 in violation.  For each VirtualMachine in this file add a new tag with **Key:** "Owner" and
