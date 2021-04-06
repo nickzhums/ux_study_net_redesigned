@@ -265,8 +265,7 @@ to create our Subnet.
 Your task will be
 ----------
 
-1. [Create an Resource Group and an AvailabilitySet under it](createRgAndAvailabilitySet.md)
-2. [Add tags to VirtualMachines](addTagsToAllVms.md)
+[Add tags to VirtualMachines](addTagsToAllVms.md)
 
 Need help during UX study session?
 ----------
