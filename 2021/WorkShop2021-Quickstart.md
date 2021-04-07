@@ -171,17 +171,18 @@ and use the Try methods to retrieve the values.
 
 ### Casting to a specific type
 ```csharp
-    string resourceId = "/subscriptions/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee/resourceGroups/workshop2021-rg/providers/Microsoft.Compute/virtualMachines/ws2021-0-e";
-    //we know the virtual machine is a resource group level identifier since it has a resource group name in its string
+    string resourceId = "/subscriptions/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee/resourceGroups/workshop2021-rg/providers/Microsoft.Network/virtualNetworks/myVnet/subnets/mySubnet";
+    //we know the subnet is a resource group level identifier since it has a resource group name in its string
     ResourceGroupResourceIdentifier id = resourceId;
     Console.WriteLine($"Subscription: {id.SubscriptionId}");
     Console.WriteLine($"ResourceGroup: {id.ResourceGroupName}");
-    Console.WriteLine($"VirtualMachine: {id.Name}");
+    Console.WriteLine($"Vnet: {id.Parent.Name}");
+    Console.WriteLine($"Subnet: {id.Name}");
 ```
 
 ### Casting to the base resource identifier
 ```csharp
-    string resourceId = "/subscriptions/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee/resourceGroups/workshop2021-rg/providers/Microsoft.Compute/virtualMachines/ws2021-0-e";
+    string resourceId = "/subscriptions/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee/resourceGroups/workshop2021-rg/providers/Microsoft.Network/virtualNetworks/myVnet/subnets/mySubnet";
     //assume we don't know what type of resource id we have we can cast to the base type
     ResourceIdentifier id = resourceId;
     string property;
@@ -189,7 +190,8 @@ and use the Try methods to retrieve the values.
         Console.WriteLine($"Subscription: {property}");
     if(id.TryGetResourceGroupName(out property))
         Console.WriteLine($"ResourceGroup: {property}");
-    Console.WriteLine($"VirtualMachine: {id.Name}");
+    Console.WriteLine($"Vnet: {id.Parent.Name}");
+    Console.WriteLine($"Subnet: {id.Name}");
 ```
 
 Managing Existing Resources By Id
